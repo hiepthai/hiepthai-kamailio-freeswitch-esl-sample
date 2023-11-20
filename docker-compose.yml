@@ -5,13 +5,15 @@ services:
     restart: unless-stopped
     volumes:
       - "${PWD}/kamailio:/etc/kamailio:rw"
-    network_mode: host
-#    ports:
-#      - "5060:5060/udp"
-#      - "5060:5060"
+    # network_mode: host
+    networks:
+      nw-default:
+        ipv4_address: 10.1.0.200
+    ports:
+      - "5060:5060/udp"
+      - "5060:5060"
   freeswitch:
     container_name: freeswitch
-#    network_mode: "host"
     ports:
       - "5080:5080/udp"
       - "5080:5080"
@@ -20,3 +22,13 @@ services:
     build: ./freeswitch
     volumes:
       - "${PWD}/freeswitch/conf:/usr/local/freeswitch/conf"
+    networks:
+      nw-default:
+        ipv4_address: 10.1.0.100
+networks:
+  nw-default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.1.0.0/24

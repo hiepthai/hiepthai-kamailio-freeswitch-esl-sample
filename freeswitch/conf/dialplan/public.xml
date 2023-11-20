@@ -38,9 +38,9 @@
         <action application="set" data="call_timeout=50"/>
         <action application="set" data="continue_on_fail=true"/>
         <action application="set" data="hangup_after_bridge=true"/>
-        <action application="set" data="sip_invite_domain=127.0.0.1"/>
+        <action application="set" data="sip_invite_domain=10.1.0.200"/>
         <action application="export" data="sip_contact_user=ufs"/>
-        <action application="bridge" data="sofia/$${domain}/$1@127.0.0.1"/>
+        <action application="bridge" data="sofia/$${domain}/$1@10.1.0.200"/>
         <action application="answer"/>
         <action application="voicemail" data="default ${domain_name} $1"/>
       </condition>
