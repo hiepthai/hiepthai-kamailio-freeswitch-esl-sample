@@ -1,0 +1,22 @@
+services:
+  kamailio:
+    image: kamailio/kamailio-ci:5.4
+    container_name: kamailio
+    restart: unless-stopped
+    volumes:
+      - "${PWD}/kamailio:/etc/kamailio:rw"
+    network_mode: host
+#    ports:
+#      - "5060:5060/udp"
+#      - "5060:5060"
+  freeswitch:
+    container_name: freeswitch
+#    network_mode: "host"
+    ports:
+      - "5080:5080/udp"
+      - "5080:5080"
+      - "8021:8021"
+    restart: unless-stopped
+    build: ./freeswitch
+    volumes:
+      - "${PWD}/freeswitch/conf:/usr/local/freeswitch/conf"
