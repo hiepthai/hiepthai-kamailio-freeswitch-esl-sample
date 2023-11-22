@@ -25,6 +25,15 @@ services:
     networks:
       nw-default:
         ipv4_address: 10.1.0.100
+  esl-app:
+    container_name: esl-app
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    build: ./esl-app
+    networks:
+      nw-default:
+        ipv4_address: 10.1.0.10
 networks:
   nw-default:
     driver: bridge
