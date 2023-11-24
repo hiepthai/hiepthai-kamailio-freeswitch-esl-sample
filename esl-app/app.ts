@@ -2,7 +2,7 @@ import Fastify from 'fastify';
 import * as crypto from 'crypto';
 import dotenv from 'dotenv';
 import winston from 'winston';
-import { FreeSwitchClient } from 'esl';
+import { FreeSwitchServer } from 'esl';
 
 const config = dotenv.config().parsed;
 
@@ -93,32 +93,39 @@ start().then(() => console.log('Server started!'));
 
 (async () => {
   const fsConnectionOptions = {
-    host: config?.FREESWITCH_HOST || 'localhost',
-    port: Number(config?.FREESWITCH_PORT) || 8021,
-    password: config?.FREESWITCH_PASSWORD || ''
+    all_events: false,
+    my_events: true
   };
 
-  const fsClient = new FreeSwitchClient(fsConnectionOptions);
+  const fsBindingOptions = {
+    host: config?.ESL_HOST || 'localhost',
+    port: Number(config?.ESL_PORT) || 7000
+  };
 
-  fsClient.connect();
+  const kamailioHost = config?.KAMAILIO_HOST || 'localhost';
+  const freeswitchHost = config?.FREESWITCH_HOST || 'localhost';
+  const kamailioPort = Number(config?.KAMAILIO_PORT) || 5060;
 
-  fsClient.on('connect', data => {
-    logger.info(`Connected to FreeSwitch: ${data}`);
-  });
+  const fsServer = new FreeSwitchServer(fsConnectionOptions);
+  await fsServer.listen(fsBindingOptions);
 
-  fsClient.on('error', err => {
+  fsServer.on('error', err => {
     logger.error(`Error from FreeSwitch: ${err}`);
   });
 
-  fsClient.on('warning', warn => {
-    logger.warn(`Warning from FreeSwitch: ${warn}`);
+  fsServer.on('drop', dropData => {
+    logger.debug(`Drop from FreeSwitch from ${dropData.remoteFamily}/${dropData.remoteAddress}:${dropData.remotePort}`);
   });
 
-  fsClient.on('end', () => {
-    logger.info(`Disconnected from FreeSwitch.`);
-  });
+  fsServer.on('connection', async (call, data) => {
+    logger.debug(`Connection from FreeSwitch with UUID ${call.uuid()}`);
+    const callee = data.body['variable_sip_to_user'];
 
-  fsClient.on('reconnecting', retry => {
-    logger.debug(`Reconnecting to FreeSwitch: ${retry}`);
+    if (callee) {
+      const source = data.body['Channel-Channel-Name'];
+      const destination = `sofia/${freeswitchHost}/${callee}@${kamailioHost}:${kamailioPort}`;
+      logger.debug(`Bridging ${source} to ${destination}`);
+      await call.execute('bridge', destination);
+    }
   });
 })();

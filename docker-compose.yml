@@ -29,6 +29,7 @@ services:
     container_name: esl-app
     ports:
       - "3000:80"
+      - "7000:7000"
     restart: unless-stopped
     build: ./esl-app
     networks:

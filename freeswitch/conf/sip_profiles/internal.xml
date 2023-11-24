@@ -88,7 +88,8 @@
     <param name="rfc2833-pt" value="101"/>
     <!-- port to bind to for sip traffic -->
     <param name="sip-port" value="$${internal_sip_port}"/>
-    <param name="dialplan" value="XML"/>
+<!--    <param name="dialplan" value="XML"/>-->
+    <param name="dialplan" value="inline:'socket:esl-app:7000 async full'"/>
     <param name="dtmf-duration" value="2000"/>
     <param name="inbound-codec-prefs" value="$${global_codec_prefs}"/>
     <param name="outbound-codec-prefs" value="$${global_codec_prefs}"/>
