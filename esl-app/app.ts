@@ -121,6 +121,10 @@ start().then(() => console.log('Server started!'));
     logger.debug(`Connection from FreeSwitch with UUID ${call.uuid()}`);
     const callee = data.body['variable_sip_to_user'];
 
+    await call.execute('playback', 'voicemail/vm-hello.wav');
+    await call.execute('playback', 'voicemail/vm-hello.wav');
+    await call.execute('playback', 'http://example.com/media/hello_world.wav');
+
     if (callee) {
       const source = data.body['Channel-Channel-Name'];
       const destination = `sofia/${freeswitchHost}/${callee}@${kamailioHost}:${kamailioPort}`;
