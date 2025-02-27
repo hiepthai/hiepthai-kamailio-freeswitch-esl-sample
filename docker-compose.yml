@@ -12,6 +12,9 @@ services:
     ports:
       - "5060:5060/udp"
       - "5060:5060"
+      - "8080:8080" # WS PORT
+      - "4443:4443" # WSS PORT
+      - "9000:9000" # MSRP PORT
   freeswitch:
     container_name: freeswitch
     ports:
@@ -29,7 +32,7 @@ services:
     container_name: esl-app
     ports:
       - "3000:80"
-      - "7000:7000"
+      - "7001:7000"
     restart: unless-stopped
     build: ./esl-app
     networks:

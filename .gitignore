@@ -16,3 +16,6 @@ Thumbs.db
 # IDE files
 .vscode/*
 .idea
+.parcel-cache
+lib
+dist
